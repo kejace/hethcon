@@ -13,12 +13,11 @@ import Data.Maybe
 import Database.Selda
 import Database.Selda.Backend
 import Database.Selda.PostgreSQL
-
 import qualified Database.Selda.Generic as SG
 import Network.Ethereum.Web3
+import Network.Ethereum.Web3.Address (toText, fromText)
 import Network.Ethereum.Web3.Encoding
 import Network.Ethereum.Web3.TH
-import Network.Ethereum.Web3.Address (toText, fromText)
 
 [abiFrom|data/ERC20.json|]
 
