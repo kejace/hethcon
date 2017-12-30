@@ -59,7 +59,7 @@ main = do
     void . runWeb3' $ eventLoop
   where
     eventLoop :: Web3 DefaultProvider ThreadId
-    eventLoop = event erc20Address $ \t@(ERC20.Transfer _ _ _) -> do
+    eventLoop = event erc20Address $ \t@(ERC20.Transfer{}) -> do
       _ <- liftIO . withPostgreSQL pg $ SG.insertGen_ transfers [t]
       return ContinueEvent
 
