@@ -1,6 +1,3 @@
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
@@ -17,9 +14,8 @@ import qualified Database.Selda.Generic as SG
 import Network.Ethereum.Web3
 import Network.Ethereum.Web3.Address (toText, fromText)
 import Network.Ethereum.Web3.Encoding
-import Network.Ethereum.Web3.TH
 
-[abiFrom|data/ERC20.json|]
+import qualified Contracts.ERC20 as ERC20
 
 {-
 -- generated transfer event type
@@ -46,7 +42,7 @@ instance SqlType Integer where
   fromSql v          = error $ "fromSql: int column with non-int value: " ++ show v
   defaultValue = error "No default value for UIntN type"
 
-transfers :: SG.GenTable Transfer
+transfers :: SG.GenTable ERC20.Transfer
 transfers = SG.genTable "transfer" []
 
 erc20Address :: Address
@@ -60,7 +56,7 @@ main = do
     void . runWeb3' $ eventLoop
   where
     eventLoop :: Web3 DefaultProvider ThreadId
-    eventLoop = event erc20Address $ \t@(Transfer _ _ _) -> do
+    eventLoop = event erc20Address $ \t@(ERC20.Transfer _ _ _) -> do
       _ <- liftIO . withPostgreSQL pg $ SG.insertGen_ transfers [t]
       return ContinueEvent
 

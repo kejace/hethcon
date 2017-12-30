@@ -17,6 +17,7 @@ executable web3-psql
   hs-source-dirs:      src
   ghc-options:         -Wall
   main-is:             Main.hs
+  other-modules:       Contracts.ERC20
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5
                      , generics-sop

@@ -4,7 +4,7 @@ packages:
   - '.'
   - location:
       git: https://github.com/f-o-a-m/hs-web3
-      commit: bbf1d0bfc0f632fcc8cd1e451ce2b7867bc92487
+      commit: 2b47af3603b68ef6d2b9f8a9cd6e848b2ad0a224
     extra-dep: true
 
 extra-deps:
