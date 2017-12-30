@@ -5,6 +5,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Main where
@@ -60,15 +61,22 @@ instance SqlType Address where
   fromSql v          = error $ "fromSql: address column with non-address value: " ++ show v
   defaultValue = error "No default value for Address type"
 
-instance KnownNat n => SqlType (UIntN n) where
+instance SqlType Integer where
   mkLit = LCustom . LText . toData
   sqlType _ = TText
   fromSql (SqlString x) = fromJust . fromData $ x
   fromSql v          = error $ "fromSql: int column with non-int value: " ++ show v
   defaultValue = error "No default value for UIntN type"
 
--- transfers table definition, possible to generate automatically
-transfers :: Table (Address :*: Address :*: UIntN 256)
+type family ToTable a :: * where
+  ToTable (SOP I '[as]) = ToRow as
+
+type family ToRow as :: * where
+  ToRow '[a] = a
+  ToRow (a : as) = a :*: ToRow as
+
+-- transfers table definition, possible to generate automatically, easy to generalize with type family
+transfers :: Table (ToTable (Rep Transfer))
 transfers = table "transfer" $ required "_to" :*: required "_from" :*: required "_value"
 
 main :: IO ()
