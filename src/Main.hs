@@ -1,19 +1,20 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE TypeFamilies #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Main where
 
+import Control.Concurrent (ThreadId)
+import Control.Monad (void)
 import Data.Maybe
 import Database.Selda
 import Database.Selda.Backend
-import GHC.TypeLits
+import Database.Selda.PostgreSQL
+
+import qualified Database.Selda.Generic as SG
 import Network.Ethereum.Web3
 import Network.Ethereum.Web3.Encoding
 import Network.Ethereum.Web3.TH
@@ -68,20 +69,24 @@ instance SqlType Integer where
   fromSql v          = error $ "fromSql: int column with non-int value: " ++ show v
   defaultValue = error "No default value for UIntN type"
 
-type family ToTable a :: * where
-  ToTable (SOP I '[as]) = ToRow as
+transfers :: SG.GenTable Transfer
+transfers = SG.genTable "transfer" []
 
-type family ToRow as :: * where
-  ToRow '[a] = a
-  ToRow (a : as) = a :*: ToRow as
+erc20Address :: Address
+erc20Address = "0x1234567890123456789012345678901234567890"
 
--- transfers table definition, possible to generate automatically, easy to generalize with type family
-transfers :: Table (ToTable (Rep Transfer))
-transfers = table "transfer" $ required "_to" :*: required "_from" :*: required "_value"
+pg :: PGConnectInfo
+pg = "erc20" `on` "localhost"
 
 main :: IO ()
 main = do
-  putStrLn "hello world"
+    void . runWeb3' $ eventLoop
+  where
+    eventLoop :: Web3 DefaultProvider ThreadId
+    eventLoop = event erc20Address $ \t@(Transfer _ _ _) -> do
+      _ <- liftIO . withPostgreSQL pg $ SG.insertGen_ transfers [t]
+      return ContinueEvent
 
 fromRight :: Either a b -> b
 fromRight (Right b) = b
+fromRight _ = error "fromRight"
