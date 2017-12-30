@@ -21,9 +21,12 @@ import qualified Contracts.ERC20 as ERC20
 -- generated transfer event type
 
 data Transfer
-   = Transfer {-# NOUNPACK #-} !Address {-# NOUNPACK #-} !Address {-# NOUNPACK #-} !Integer
-   deriving (Show, Eq, Ord, GHC.Generics.Generic)
- instance Generic Transfer
+  = Transfer {transfer_from :: {-# NOUNPACK #-} !Address,
+              transfer_to :: {-# NOUNPACK #-} !Address,
+              transfer_value :: {-# NOUNPACK #-} !Integer}
+  deriving (Show, Eq, Ord, GHC.Generics.Generic)
+instance Generic Transfer
+
 
 -}
 
