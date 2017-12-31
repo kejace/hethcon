@@ -25,4 +25,5 @@ executable web3-psql
                      , generics-sop
                      , selda
                      , selda-postgresql
+                     , text
                      , web3

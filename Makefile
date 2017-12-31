@@ -1,9 +1,9 @@
 NODE_URL?="http://geth-rinkeby-deploy.foam.svc.cluster.local:8545"
-PGHOST ?= "localhost"
-PGPORT ?= "5432"
-PGUSER ?= "postgres"
-PGDATABASE ?= "erc20"
-PGPASSWORD ?= "password"
+PG_HOST ?= "localhost"
+PG_PORT ?= "5432"
+PG_USER ?= "postgres"
+PG_DATABASE ?= "erc20"
+PG_PASSWORD ?= "password"
 
 all: stack
 
@@ -19,14 +19,14 @@ hlint:
 stylish:
 	find ./src -name "*.hs" | xargs stylish-haskell -c ./.stylish_haskell.yaml -i;
 
-foam-db-process: stack
+token-indexer: stack
 	NODE_URL=$(NODE_URL) \
-  CONTRACT_ADDRESS=$(CONTRACT_ADDRESS) \
-	PGHOST=$(PGHOST)\
-	PGPORT=$(PGPORT)\
-	PGUSER=$(PGUSER)\
-	PGDATABASE=$(PGDATABASE)\
-	PGPASSWORD=$(PGPASSWORD)\
+	CONTRACT_ADDRESS=$(CONTRACT_ADDRESS) \
+	PG_HOST=$(PG_HOST) \
+	PG_PORT=$(PG_PORT) \
+	PG_USER=$(PG_USER) \
+	PG_DATABASE=$(PG_DATABASE) \
+	PG_PASSWORD=$(PG_PASSWORD) \
 	web3-psql
 
 
