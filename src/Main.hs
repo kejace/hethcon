@@ -1,27 +1,27 @@
-{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DataKinds         #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Main where
 
-import Control.Concurrent (ThreadId, threadDelay)
-import Control.Monad (void)
-import Database.Selda
-import Database.Selda.PostgreSQL
-import qualified Database.Selda.Generic as SG
-import Network.Ethereum.Web3
+import           Control.Concurrent        (ThreadId, threadDelay)
+import           Control.Monad             (void)
+import           Database.Selda
+import qualified Database.Selda.Generic    as SG
+import           Database.Selda.PostgreSQL
+import           Network.Ethereum.Web3
 
-import qualified Contracts.ERC20 as ERC20
-import Orphans ()
+import qualified Contracts.ERC20           as ERC20
+import           Orphans                   ()
 
 transfers :: SG.GenTable ERC20.Transfer
 transfers = SG.genTable "transfer" []
 
 pg :: PGConnectInfo
-pg = "erc20" `on` "localhost"
+pg = ("erc20" `on` "localhost") {pgUsername = Just "postgres"}
 
 erc20Address :: Address
-erc20Address = undefined
+erc20Address = "0xa8fdc778fda2df87b3fa5842dca3b5ff3f3b0e76"
 
 main :: IO ()
 main = do

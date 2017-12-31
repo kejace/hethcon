@@ -2,12 +2,12 @@
 
 module Orphans where
 
-import Data.Maybe (fromJust)
-import Database.Selda
-import Database.Selda.Backend
-import Network.Ethereum.Web3
-import Network.Ethereum.Web3.Address (toText, fromText)
-import Network.Ethereum.Web3.Encoding (toData, fromData)
+import           Data.Maybe                     (fromJust)
+import           Database.Selda
+import           Database.Selda.Backend
+import           Network.Ethereum.Web3
+import           Network.Ethereum.Web3.Address  (fromText, toText)
+import           Network.Ethereum.Web3.Encoding (fromData, toData)
 
 -- these instances would be defined in a central library
 instance SqlType Address where
@@ -26,4 +26,4 @@ instance SqlType Integer where
 
 fromRight :: Either a b -> b
 fromRight (Right b) = b
-fromRight _ = error "fromRight"
+fromRight _         = error "fromRight"
