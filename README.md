@@ -12,5 +12,5 @@ We do not have the ability to create filters on an infura node, and we are still
 
 ## run
 ```bash
-> env CONTRACT_ADDRESS=<YOUR ERC20 ADDRESS> make token-indexer
+> env CONTRACT_ADDRESS=<YOUR ERC20 ADDRESS> make transfer-indexer
 ```
