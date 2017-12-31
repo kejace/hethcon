@@ -26,7 +26,6 @@ foam-db-process: stack
 	PGUSER=$(PGUSER)\
 	PGDATABASE=$(PGDATABASE)\
 	PGPASSWORD=$(PGPASSWORD)\
-	PGPOOLSIZE=$(PGPOOLSIZE)\
 	web3-psql
 
 
