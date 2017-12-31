@@ -1,4 +1,4 @@
-NODE_URL?="http://geth-rinkeby-deploy.foam.svc.cluster.local:8545"
+NODE_URL ?= "http://geth-rinkeby-deploy.foam.svc.cluster.local:8545"
 PG_HOST ?= "localhost"
 PG_PORT ?= "5432"
 PG_USER ?= "postgres"
@@ -19,7 +19,7 @@ hlint:
 stylish:
 	find ./src -name "*.hs" | xargs stylish-haskell -c ./.stylish_haskell.yaml -i;
 
-token-indexer: stack
+transfer-indexer: stack
 	NODE_URL=$(NODE_URL) \
 	CONTRACT_ADDRESS=$(CONTRACT_ADDRESS) \
 	PG_HOST=$(PG_HOST) \
