@@ -90,12 +90,12 @@
 		"inputs": [
 			{
 				"indexed": true,
-				"name": "from",
+				"name": "to",
 				"type": "address"
 			},
 			{
 				"indexed": true,
-				"name": "to",
+				"name": "from",
 				"type": "address"
 			},
 			{
