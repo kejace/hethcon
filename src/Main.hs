@@ -4,19 +4,19 @@
 
 module Main where
 
-import           Control.Error
+import qualified Contracts.ERC20           as ERC20
 import           Control.Concurrent        (ThreadId, threadDelay)
+import           Control.Error
 import           Control.Monad             (void)
 import           Control.Monad.IO.Class    (liftIO)
+import           Data.String               (IsString (..))
 import           Database.Selda
 import qualified Database.Selda.Generic    as SG
 import           Database.Selda.PostgreSQL
-import           Data.String                (IsString (..))
 import           Network.Ethereum.Web3
-import qualified Contracts.ERC20           as ERC20
 import           Orphans                   ()
-import           System.Environment        (lookupEnv, getEnv)
-import qualified Text.Read          as T
+import           System.Environment        (getEnv, lookupEnv)
+import qualified Text.Read                 as T
 
 
 transfers :: SG.GenTable ERC20.Transfer
@@ -35,7 +35,7 @@ main = do
       _ <- threadDelay 1000000
       loop
     eventLoop :: PGConnectInfo -> Address -> Web3 HttpProvider ThreadId
-    eventLoop conn addr = event addr $ \t@(ERC20.Transfer{}) -> do
+    eventLoop conn addr = event addr $ \t@ERC20.Transfer{} -> do
       liftIO . print $ "Got transfer : " ++ show t
       _ <- liftIO . withPostgreSQL conn $ SG.insertGen_ transfers [t]
       return ContinueEvent
@@ -48,7 +48,7 @@ readEnvVar var = do
   T.readMaybe str ?? ("Couldn't Parse Environment Variable: " ++ str)
 
 data Config =
-  Config { pg :: PGConnectInfo
+  Config { pg           :: PGConnectInfo
          , erc20Address :: Address
          }
 

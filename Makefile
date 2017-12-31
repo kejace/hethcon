@@ -21,6 +21,7 @@ stylish:
 
 foam-db-process: stack
 	NODE_URL=$(NODE_URL) \
+  CONTRACT_ADDRESS=$(CONTRACT_ADDRESS) \
 	PGHOST=$(PGHOST)\
 	PGPORT=$(PGPORT)\
 	PGUSER=$(PGUSER)\
