@@ -31,6 +31,7 @@ main = do
     config <- mkConfig
     let pgConn = pg config
     withPostgreSQL pgConn . tryCreateTable $ SG.gen transfers
+    print =<< (withPostgreSQL pgConn . query . select $ SG.gen transfers)
     _ <- runWeb3' $ eventLoop pgConn (erc20Address config)
     loop
   where

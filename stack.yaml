@@ -6,9 +6,15 @@ packages:
       git: https://github.com/f-o-a-m/hs-web3
       commit: 0e1515ca45f89523ede2926fdc0b033139cd592d
     extra-dep: true
+  - location:
+      git: https://github.com/f-o-a-m/selda
+      commit: 64993ae4f4249df1222691fcb6341367fb8c68d4
+      subdirs:
+        - selda 
+        - selda-postgresql
+    extra-dep: true
 
 extra-deps:
-  - selda-0.1.11.2
   - sized-0.2.1.1
   - equational-reasoning-0.5.0.0
   - monomorphic-0.0.3.3
