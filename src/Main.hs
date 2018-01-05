@@ -1,5 +1,6 @@
 {-# LANGUAGE DataKinds         #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeOperators     #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Main where
@@ -11,11 +12,8 @@ import qualified Database.Selda.Generic    as SG
 import           Database.Selda.PostgreSQL
 import           Network.Ethereum.Web3
 
-
-
 import           Config
 import           Orphans                   ()
-
 
 transfers :: SG.GenTable ERC20.Transfer
 transfers = SG.genTable "transfer" []
@@ -26,12 +24,20 @@ eventLoop conn addr = event addr $ \t@ERC20.Transfer{} -> do
   _ <- liftIO . withPostgreSQL conn $ SG.insertGen_ transfers [t]
   return ContinueEvent
 
+lastOfThree :: (a :*: b :*: c) -> c
+lastOfThree (_ :*: _ :*: c) = c
+
 main :: IO ()
 main = do
     config <- mkConfig
     let pgConn = pg config
     withPostgreSQL pgConn . tryCreateTable $ SG.gen transfers
-    print =<< (withPostgreSQL pgConn . query . select $ SG.gen transfers)
+
+    vals <- withPostgreSQL pgConn . query . select $ SG.gen transfers
+    liftIO $ putStrLn $ "Sum clientside: " ++ (show $ sum $ lastOfThree <$> vals)
+
+    liftIO $ putStrLn $ "Sum serverside: (not yet implemented)"
+
     _ <- runWeb3' $ eventLoop pgConn (erc20Address config)
     loop
   where
