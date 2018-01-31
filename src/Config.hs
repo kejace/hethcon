@@ -19,8 +19,8 @@ getEnvVar :: String -> ExceptT String IO String
 getEnvVar var = lookupEnv var !? ("Missing Environment Variable: " ++ var)
 
 data Config =
-  Config { pg           :: PGConnectInfo
-         , erc20Address :: Address
+  Config { pg                  :: PGConnectInfo
+         , contractAddress     :: Address
          }
 
 mkConfig :: IO Config
