@@ -50,8 +50,7 @@ transfer = SG.genTable "transfer" []
 auctionCreated :: SG.GenTable CK.AuctionCreated
 auctionCreated = SG.genTable "auction_created" []
 
-mkTable :: forall proxy e
-         . (Typeable e, SG.Generic e)
+mkTable :: (Typeable e, SG.Generic e)
         => e
         -> SG.GenTable CK.AuctionCreated
 mkTable e = SG.genTable (fromString . show . typeOf $ e) []
