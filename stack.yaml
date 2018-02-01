@@ -2,10 +2,11 @@ resolver: lts-9.10
 
 packages:
   - '.'
-  - location:
-      git: https://github.com/airalab/hs-web3
-      commit: 68e774da1bc30563c0d1240c997b6e07e6b2b1d0
-    extra-dep: true
+  - '../hs-web3'
+    #   - location:
+    #       git: https://github.com/airalab/hs-web3
+    #       commit: 68e774da1bc30563c0d1240c997b6e07e6b2b1d0
+    #     extra-dep: true
   - location:
       git: https://github.com/f-o-a-m/selda
       commit: 64993ae4f4249df1222691fcb6341367fb8c68d4

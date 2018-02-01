@@ -3,6 +3,7 @@
 {-# LANGUAGE TypeOperators     #-}
 {-# LANGUAGE TypeApplications  #-}
 {-# LANGUAGE RankNTypes        #-}
+{-# LANGAUGE FlexibleContexts  #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Main where
@@ -18,6 +19,7 @@ import qualified Contracts.KittyCore       as KC
 import           Control.Concurrent        (ThreadId, threadDelay)
 import           Control.Monad             (void)
 import           Data.Default              (def)
+import           Data.String               (fromString)
 import           Data.Proxy                (Proxy(..))
 import           GHC.TypeLits              (KnownSymbol, symbolVal)
 import           Database.Selda            hiding (def)
@@ -26,6 +28,9 @@ import           Database.Selda.PostgreSQL
 import           Network.Ethereum.Web3
 import           Network.Ethereum.Web3.Contract (Event(..))
 import           Network.Ethereum.Web3.Types (Call (..), TxHash)
+
+import           GHC.Generics              (Generic(..))
+import           Data.Typeable
 
 import           Config
 import           Orphans                   ()
@@ -45,11 +50,11 @@ transfer = SG.genTable "transfer" []
 auctionCreated :: SG.GenTable CK.AuctionCreated
 auctionCreated = SG.genTable "auction_created" []
 
--- mkTable :: forall proxy e
---          . (Event e)
---         => e
---         -> SG.GenTable e
--- mkTable e = SG.genTable (symbolVal e) []
+mkTable :: forall proxy e
+         . (Typeable e, SG.Generic e)
+        => e
+        -> SG.GenTable CK.AuctionCreated
+mkTable e = SG.genTable (fromString . show . typeOf $ e) []
 
 eventLoop :: forall proxy e
            . (Event e)
@@ -78,7 +83,8 @@ main :: IO ()
 main = do
     config <- mkConfig
     let pgConn = pg config
-    withPostgreSQL pgConn . tryCreateTable $ SG.gen auctionCreated
+    -- withPostgreSQL pgConn . tryCreateTable $ SG.gen auctionCreated
+    withPostgreSQL pgConn . tryCreateTable $ SG.gen (mkTable (Proxy :: Proxy CK.AuctionCreated))
     --let theCall = callFromTo "0x0000000000" (aAddress config)
     --_ <- runWeb3' $ A.aFunction theCall (aAddress config) (fromIntegral $ 123)
     _ <- runWeb3' $ eventLoop (Proxy :: Proxy CK.AuctionCreated) pgConn (contractAddress config)
