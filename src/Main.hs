@@ -10,12 +10,9 @@ module Main where
 
 import qualified Contracts.ERC20           as ERC20
 import qualified Contracts.ERC721          as ERC721
-import qualified Contracts.UPort           as UPort
-import qualified Contracts.A               as A
 import qualified Contracts.Exchange        as Exchange
 import qualified Contracts.WETH9           as WETH9
-import qualified Contracts.CryptoKitties   as CK
-import qualified Contracts.KittyCore       as KC
+
 import           Control.Concurrent        (ThreadId, threadDelay)
 import           Control.Monad             (void)
 import           Data.Default              (def)
@@ -35,32 +32,17 @@ import           Data.Typeable
 import           Config
 import           Orphans                   ()
 
-aa :: SG.GenTable A.AA
-aa = SG.genTable "aa" []
+filledData :: SG.GenTable Exchange.LogFill
+filledData = SG.genTable "LogFill" []
 
-filled :: SG.GenTable Exchange.Filled
-filled = SG.genTable "filled" []
-
-canceled :: SG.GenTable Exchange.Canceled
-canceled = SG.genTable "canceled" []
-
-mkTable :: (Typeable e, SG.Generic e)
-        => e
-        -> SG.GenTable CK.AuctionCreated
-mkTable e = SG.genTable (fromString . show . typeOf $ e) []
-
-eventLoop :: forall proxy e
-           . (Event e)
-          => proxy e
-          -> PGConnectInfo
+eventLoop :: PGConnectInfo
           -> Address
           -> Web3 HttpProvider ()
-eventLoop e conn addr = do
-  let eventType = Proxy :: Proxy e
+eventLoop conn addr = do
   let fltr = eventFilter addr
-  void $ event fltr $ \event@eventType -> do
-    liftIO . print $ "Got Filled: " ++ show event
-    _ <- liftIO . withPostgreSQL conn $ SG.insertGen_ filled [event]
+  void $ event fltr $ \event@Exchange.LogFill{} -> do
+    liftIO . print $ "Got LogFill: " ++ show event
+    _ <- liftIO . withPostgreSQL conn $ SG.insertGen_ filledData [event]
     return ContinueEvent
 
 lastOfThree :: (a :*: b :*: c) -> c
@@ -76,11 +58,8 @@ main :: IO ()
 main = do
     config <- mkConfig
     let pgConn = pg config
-    withPostgreSQL pgConn . tryCreateTable $ SG.gen filled
-    --withPostgreSQL pgConn . tryCreateTable $ SG.gen (mkTable (Proxy :: Proxy Exchange.Filled))
-    --let theCall = callFromTo "0x0000000000" (aAddress config)
-    --_ <- runWeb3' $ A.aFunction theCall (aAddress config) (fromIntegral $ 123)
-    _ <- runWeb3' $ eventLoop (Proxy :: Proxy Exchange.Filled) pgConn (contractAddress config)
+    withPostgreSQL pgConn . tryCreateTable $ SG.gen filledData
+    _ <- runWeb3' $ eventLoop pgConn (contractAddress config)
     loop
   where
     -- this is dumb, but needed to keep the process alive.

@@ -26,6 +26,14 @@ instance SqlType (UIntN 256) where
   fromSql v          = error $ "fromSql: (UIntN 256) column with non-address value: " ++ show v
   defaultValue = error "No default value for (UIntN 256) type"
 
+instance SqlType (BytesN 32) where
+  mkLit = undefined --LCustom . LBytestring . unBytesN
+  sqlType _ = TInteger
+  fromSql (SqlString x) = undefined --fromJust . uIntNFromInteger . read . unpack $ x
+  fromSql v          = error $ "fromSql: (BytesN 32) column with non-address value: " ++ show v
+  defaultValue = error "No default value for (BytesN 32) type"
+
+
 fromRight :: Either a b -> b
 fromRight (Right b) = b
 fromRight _         = error "fromRight"
