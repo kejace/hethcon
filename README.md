@@ -21,9 +21,12 @@ Yopu need a `postgres` server running (`localhost` by default). Suggested to run
 > env CONTRACT_ADDRESS=<YOUR ERC20 ADDRESS> make transfer-indexer
 ```
 
-## rinkeby version
+## mainnet version (omisego) 
+
+Inspect the contract [here](https://etherscan.io/address/0xd26114cd6EE289AccF82350c8d8487fedB8A0C07)
+
 ```bash
-> createdb -h localhost -p 5432 -U postgres erc20 ; CONTRACT_ADDRESS=0x06012c8cf97BEaD5deAe237070F9587f8E7A266d NODE_URL="http://geth-rinkeby-deploy.foam.svc.cluster.local:8545" make transfer-indexer
+> createdb -h localhost -p 5432 -U postgres filled ; CONTRACT_ADDRESS=d26114cd6EE289AccF82350c8d8487fedB8A0C07 NODE_URL="http://parity-proxy.foam.svc.cluster.local:8645/" make transfer-indexer
 ```
 
 ## future work

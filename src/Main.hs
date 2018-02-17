@@ -44,12 +44,6 @@ filled = SG.genTable "filled" []
 canceled :: SG.GenTable Exchange.Canceled
 canceled = SG.genTable "canceled" []
 
-transfer :: SG.GenTable KC.Transfer
-transfer = SG.genTable "transfer" []
-
-auctionCreated :: SG.GenTable CK.AuctionCreated
-auctionCreated = SG.genTable "auction_created" []
-
 mkTable :: (Typeable e, SG.Generic e)
         => e
         -> SG.GenTable CK.AuctionCreated
@@ -82,11 +76,11 @@ main :: IO ()
 main = do
     config <- mkConfig
     let pgConn = pg config
-    -- withPostgreSQL pgConn . tryCreateTable $ SG.gen auctionCreated
-    withPostgreSQL pgConn . tryCreateTable $ SG.gen (mkTable (Proxy :: Proxy CK.AuctionCreated))
+    withPostgreSQL pgConn . tryCreateTable $ SG.gen filled
+    --withPostgreSQL pgConn . tryCreateTable $ SG.gen (mkTable (Proxy :: Proxy Exchange.Filled))
     --let theCall = callFromTo "0x0000000000" (aAddress config)
     --_ <- runWeb3' $ A.aFunction theCall (aAddress config) (fromIntegral $ 123)
-    _ <- runWeb3' $ eventLoop (Proxy :: Proxy CK.AuctionCreated) pgConn (contractAddress config)
+    _ <- runWeb3' $ eventLoop (Proxy :: Proxy Exchange.Filled) pgConn (contractAddress config)
     loop
   where
     -- this is dumb, but needed to keep the process alive.
