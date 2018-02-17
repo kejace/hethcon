@@ -23,7 +23,7 @@ Yopu need a `postgres` server running (`localhost` by default). Suggested to run
 
 ## rinkeby version
 ```bash
-> CONTRACT_ADDRESS=0x9edcb9a9c4d34b5d6a082c86cb4f117a1394f831 NODE_URL="http://geth-rinkeby-deploy.foam.svc.cluster.local:8545" make transfer-indexer 
+> createdb -h localhost -p 5432 -U postgres erc20 ; CONTRACT_ADDRESS=0x06012c8cf97BEaD5deAe237070F9587f8E7A266d NODE_URL="http://geth-rinkeby-deploy.foam.svc.cluster.local:8545" make transfer-indexer
 ```
 
 ## future work
