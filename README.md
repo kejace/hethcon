@@ -14,7 +14,7 @@ Contracts are [here](https://0xproject.com/wiki#Deployed-Addresses)
 > make all
 ```
 
-## run
+## run (localhost)
 
 Yopu need a `postgres` server running (`localhost` by default). Suggested to run is
 ```bash
@@ -22,15 +22,12 @@ Yopu need a `postgres` server running (`localhost` by default). Suggested to run
 ```
 
 ```bash
-> env CONTRACT_ADDRESS=<YOUR ERC20 ADDRESS> make transfer-indexer
+> make 0x
 ```
 
-## mainnet version (omisego) 
-
-Inspect the contract [here](https://etherscan.io/address/0xd26114cd6EE289AccF82350c8d8487fedB8A0C07)
-
+## run (dockerized)
 ```bash
-> make 0x
+> make docker0x
 ```
 
 ## future work
