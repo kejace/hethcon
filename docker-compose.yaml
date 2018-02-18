@@ -3,12 +3,14 @@ services:
   postgres:
     image: sheerun/awesome-postgres:9.5
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql1
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres && sleep 20"]
+      test: ["CMD-SHELL", "pg_isready -U postgres && sleep 10"]
       interval: 30s
       timeout: 30s
       retries: 3
+    environment:
+      - DB_NAME=erc20
   token-indexer:
     build:
       context: .
@@ -20,7 +22,7 @@ services:
         condition: service_healthy
     command: web3-psql
     environment:
-      - PG_HOST=localhost
+      - PG_HOST=postgres
       - PG_PORT=5432
       - PG_USER=postgres
       - PG_DATABASE=erc20
