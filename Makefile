@@ -12,8 +12,11 @@ build:
 	@stack build
 	@BINARY_PATH=${BINARY_PATH_RELATIVE} docker-compose build
 
+base-pull:
+	@stack docker pull
+
 ## Builds base image used for `stack image container`
-build-base:
+build-base: base-pull
 	@docker build -t foam/token-indexer-base -f Dockerfile.base .
 
 ## Builds app using stack-native.yaml
@@ -26,7 +29,7 @@ run-stack-native:
 	@docker run -p 3000:3000 -it -w /opt/app foam/token-indexer transfer-indexer
 
 docker0x: build-stack-native
-	@docker-compose rm -f && docker-compose kill && docker-compose up
+	@docker-compose rm -f && docker-compose kill && docker-compose up -d
 
 all: stack
 
