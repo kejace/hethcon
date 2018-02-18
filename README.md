@@ -5,7 +5,7 @@
 ## try it!
 
 + REST API is [here](http://petstore.swagger.io/?url=http://ec2-52-26-52-30.us-west-2.compute.amazonaws.com:31502/)
-+ graphql is [here](http://ec2-52-26-52-30.us-west-2.compute.amazonaws.com:31500/graphiql)
++ graphql is [here](http://ec2-52-26-52-30.us-west-2.compute.amazonaws.com:31500/graphiql?query={%20allOrders%20{%20edges%20{%20node%20{%20exchangeorderExchangeContractAddress%20exchangeorderMaker%20exchangeorderTaker%20exchangeorderMakerTokenAddress%20exchangeorderTakerTokenAddress%20exchangeorderMakerTokenAmount%20exchangeorderTakerTokenAmount%20exchangeorderMakerFee%20exchangeorderTakerFee%20exchangeorderFeeRecipient%20exchangeorderExpirationUnixTimestampSec%20}%20}%20}%20})
 + connect postgres like this: `psql -h ec2-52-26-52-30.us-west-2.compute.amazonaws.com -p 31501 -U postgres erc20`
 
 Not to be confused with `Hencon Vacuum Technologies designs, manufactures, supplies and supports a complete range of heavy-duty vacuum systems for industrial, plant and mining applications.`
