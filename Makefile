@@ -21,6 +21,7 @@ build-base: base-pull
 
 ## Builds app using stack-native.yaml
 build-stack-native: build-base
+	@stack --stack-yaml stack-native.yaml clean
 	@stack --stack-yaml stack-native.yaml build
 	@stack --stack-yaml stack-native.yaml image container
 
@@ -28,7 +29,10 @@ build-stack-native: build-base
 run-stack-native:
 	@docker run -p 3000:3000 -it -w /opt/app foam/token-indexer transfer-indexer
 
-docker0x: build-stack-native
+build0x: build-stack-native
+        @docker-compose rm -f && docker-compose kill && docker-compose up -d
+
+docker0x: 
 	@docker-compose rm -f && docker-compose kill && docker-compose up -d
 
 all: stack
