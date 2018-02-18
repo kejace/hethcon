@@ -23,7 +23,7 @@ build-stack-native: build-base
 
 ## Run container built by `stack image container`
 run-stack-native:
-	@docker run -p 3000:3000 -it -w /opt/app ${IMAGE_NAME} myapp
+	@docker run -p 3000:3000 -it -w /opt/app foam/token-indexer transfer-indexer
 
 all: stack
 
