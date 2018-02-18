@@ -8,4 +8,11 @@ services:
       args:
         - BINARY_PATH
     image: foam/token-indexer 
-    command: web3-psql 
+    command: web3-psql
+    environment:
+      - PG_HOST=localhost
+      - PG_PORT=5432
+      - PG_USER=postgres
+      - PG_DATABASE=erc20
+      - PG_PASSWORD=password
+      - NODE_URL="https://mainnet.infura.io/7QHpybCROfXKpT7hNUfm:8545"
