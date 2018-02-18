@@ -3,12 +3,8 @@ docker:
   enable: true
 image:
   container:
-    base: "token-indexer-base"
-    name: "token-indexer"
-    add:
-      static/: /opt/app/static
-      config/: /opt/app/config
-resolver: lts-10.0
+    base: "foam/token-indexer-base"
+    name: "foam/token-indexer"
 
 packages:
   - '.'
