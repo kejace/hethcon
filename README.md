@@ -4,6 +4,7 @@
 
 ## try it!
 
++ REST API is [here](http://petstore.swagger.io/?url=http://ec2-52-26-52-30.us-west-2.compute.amazonaws.com:31502/)
 + graphql is [here](http://ec2-52-26-52-30.us-west-2.compute.amazonaws.com:31500/graphiql)
 + connect postgres like this: `psql -h ec2-52-26-52-30.us-west-2.compute.amazonaws.com -p 31501 -U postgres erc20`
 
