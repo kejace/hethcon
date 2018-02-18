@@ -1,6 +1,6 @@
 # hethcon
 
-![logo](https://github.com/kejace/hethcon/raw/master/logo.gif?raw=true)
+![logo](https://github.com/kejace/hethcon/raw/master/logo.gif?raw=true | width=400)
 
 ## try it!
 
