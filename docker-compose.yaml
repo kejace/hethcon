@@ -1,5 +1,25 @@
 version: '2.1'
 services:
+  postgraphql:
+    image: erasche/postgraphql:latest
+    ports:
+        - "31500:5000"
+    environment:
+        #DB_DEFAULT_ROLE: postgres
+        DB_GRAPHQL_PATH: "/graphql"
+        DB_GRAPHIQL_PATH: "/graphiql"
+        #PG_SECRET: "password"
+        DB_SCHEMA: "public"
+        PGUSER: postgres
+        PGPASSWORD: postgres
+        PGHOST: postgres
+        PGDATABASE: postgres
+        PGPORT: 5432
+    links:
+        - "postgres:postgres"  
+    depends_on:
+      postgres:
+        condition: service_healthy
   postgres:
     image: sheerun/awesome-postgres:9.5
     volumes:
@@ -11,6 +31,8 @@ services:
       retries: 3
     environment:
       - DB_NAME=erc20
+    ports:
+      - "31501:5432"
   token-indexer:
     build:
       context: .
