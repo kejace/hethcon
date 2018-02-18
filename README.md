@@ -1,10 +1,12 @@
 # hethcon
 
-Not to be confused with `Hencon Vacuum Technologies designs, manufactures, supplies and supports a complete range of heavy-duty vacuum systems for industrial, plant and mining applications.`
-
 ![logo](logo.gif?raw=true)
 
-A `docker` image that automatically indexes all order events from `0x` and all its `SRA` compliant relay nodes' orderbooks into a `postgres` database.
+
+Not to be confused with `Hencon Vacuum Technologies designs, manufactures, supplies and supports a complete range of heavy-duty vacuum systems for industrial, plant and mining applications.`
+
+
+This is a one-click deploy `docker` image that automatically indexes all order events from `0x` and all its `SRA` compliant relay nodes' orderbooks into a `postgres` database.
 
 This database is also connected to a `graphql` and a `REST` API for easy consumption.
 
