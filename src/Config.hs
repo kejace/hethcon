@@ -10,6 +10,8 @@ import           Network.Ethereum.Web3
 import           System.Environment        (getEnv, lookupEnv)
 import qualified Text.Read                 as T
 
+import           Relay
+
 readEnvVar :: Read a => String -> ExceptT String IO a
 readEnvVar var = do
   str <- lookupEnv var !? ("Missing Environment Variable: " ++ var)
@@ -21,6 +23,7 @@ getEnvVar var = lookupEnv var !? ("Missing Environment Variable: " ++ var)
 data Config =
   Config { pg                  :: PGConnectInfo
          , contractAddress     :: Address
+         , relayEnv            :: ClientEnv
          }
 
 mkConfig :: IO Config
@@ -38,7 +41,8 @@ mkConfig = do
                                , pgDatabase = db
                                }
     addr <- fromString <$> getEnvVar "CONTRACT_ADDRESS"
-    return $ Config pgConn addr
+    relay <- liftIO $ mkRelayClientEnv "api.radarrelay.com" "/0x/v0" 80
+    return $ Config pgConn addr relay
   either error return ec
 
 data HttpProvider

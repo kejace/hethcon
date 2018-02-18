@@ -1,67 +1,56 @@
 {-# LANGUAGE DataKinds         #-}
+{-# LANGUAGE RecordWildCards   #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeOperators     #-}
 {-# LANGUAGE TypeApplications  #-}
 {-# LANGUAGE RankNTypes        #-}
-{-# LANGAUGE FlexibleContexts  #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Main where
 
-import qualified Contracts.ERC20           as ERC20
-import qualified Contracts.ERC721          as ERC721
 import qualified Contracts.Exchange        as Exchange
-import qualified Contracts.WETH9           as WETH9
 
-import           Control.Concurrent        (ThreadId, threadDelay)
-import           Control.Monad             (void)
-import           Data.Default              (def)
-import           Data.String               (fromString)
-import           Data.Proxy                (Proxy(..))
-import           GHC.TypeLits              (KnownSymbol, symbolVal)
+import           Control.Concurrent        (threadDelay)
+import           Control.Monad             (void, forM_)
 import           Database.Selda            hiding (def)
 import qualified Database.Selda.Generic    as SG
 import           Database.Selda.PostgreSQL
 import           Network.Ethereum.Web3
+import           Network.Ethereum.Web3.Types (Filter(..), DefaultBlock(..))
+import           Network.Ethereum.Web3.Address (toText)
 import           Network.Ethereum.Web3.Contract (Event(..))
-import           Network.Ethereum.Web3.Types (Call (..), TxHash)
-
-import           GHC.Generics              (Generic(..))
-import           Data.Typeable
 
 import           Config
 import           Orphans                   ()
-
 import           Relay
 
 filledData :: SG.GenTable Exchange.LogFill
 filledData = SG.genTable "LogFill" []
 
-eventLoop :: PGConnectInfo
-          -> Address
+eventLoop :: Config
           -> Web3 HttpProvider ()
-eventLoop conn addr = do
-  let fltr = eventFilter addr
-  void $ event fltr $ \event@Exchange.LogFill{} -> do
-    liftIO . print $ "Got LogFill: " ++ show event
-    _ <- liftIO . withPostgreSQL conn $ SG.insertGen_ filledData [event]
+eventLoop (Config conn addr relay) = do
+  let fltr = (eventFilter addr  :: Filter Exchange.LogFill) {filterFromBlock = BlockWithNumber 4148002 }
+  liftIO $ print $ show fltr
+  void $ eventMany' fltr 1000 $ \e@Exchange.LogFill{..} -> do
+    liftIO . print $ "Got LogFill: " ++ show e
+    _ <- liftIO . withPostgreSQL conn $ SG.insertGen_ filledData [e]
+    orders <- liftIO $ runClientM (getExchangeOrders (Just 10) (Just 1) [] [] [] [] [toText logFillMaker_] [toText logFillTaker_] [] []) relay
+    case orders of
+      Left err -> error $ show err
+      Right os -> do
+       if os == []
+         then liftIO . print $ ("No ORDERS" :: String)
+         else forM_ orders $ liftIO . print
     return ContinueEvent
-
-lastOfThree :: (a :*: b :*: c) -> c
-lastOfThree (_ :*: _ :*: c) = c
-
-callFromTo from to =
-         def { callFrom = Just from
-             , callTo   = to
-             , callGasPrice = Just 4000000000
-             }
 
 main :: IO ()
 main = do
     config <- mkConfig
     let pgConn = pg config
     withPostgreSQL pgConn . tryCreateTable $ SG.gen filledData
-    _ <- runWeb3' $ eventLoop pgConn (contractAddress config)
+    _ <- runWeb3' $ eventLoop config
     loop
   where
     -- this is dumb, but needed to keep the process alive.

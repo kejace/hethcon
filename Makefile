@@ -1,6 +1,6 @@
 EXCHANGE ?= "0x12459C951127e0c374FF9105DdA097662A027093"
 ETHERTOKEN ?= "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
-NODE_URL ?= "http://parity-proxy.foam.svc.cluster.local:8545"
+NODE_URL ?= "https://mainnet.infura.io/7QHpybCROfXKpT7hNUfm:8545"
 PG_HOST ?= "localhost"
 PG_PORT ?= "5432"
 PG_USER ?= "postgres"
@@ -28,7 +28,7 @@ run-stack-native:
 all: stack
 
 0x: stack
-	createdb -h localhost -p 5432 -U postgres erc20 ; CONTRACT_ADDRESS=0x12459C951127e0c374FF9105DdA097662A027093 NODE_URL="http://parity-proxy.foam.svc.cluster.local:8645/" make transfer-indexer
+	createdb -h localhost -p 5432 -U postgres erc20 ; CONTRACT_ADDRESS=0x12459C951127e0c374FF9105DdA097662A027093 make transfer-indexer
 
 stack:
 	stack install
