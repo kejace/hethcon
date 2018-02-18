@@ -29,10 +29,11 @@ import           System.IO
 import           Config
 import           Orphans                   ()
 import           Relay
-import           Relay.DB                  (orders)
+import           Relay.DB                  (radarOrders, dexOrders)
 
 filledData :: SG.GenTable Exchange.LogFill
 filledData = SG.genTable "LogFill" []
+
 
 eventLoop :: Config
           -> Web3 HttpProvider ()
@@ -50,30 +51,39 @@ eventLoop (Config conn addr relay) = do
           putMVar knownTokenPairs pairs
         else liftIO $ do
           print $ "Found New Token Pair : " ++ show newPair
-          setupSocket conn makerToken takerToken
+          setupRadarSocket conn makerToken takerToken
+          setupDexSocket conn makerToken takerToken
           putMVar knownTokenPairs $ S.insert newPair pairs
       return ContinueEvent
   where
-    setupSocket pg makerAddr takerAddr = do
+    setupRadarSocket pg makerAddr takerAddr = do
       let payload = WebsocketReqPayload makerAddr takerAddr True 100
           handler = \(OrderBook asks bids) -> do
-            _ <- withPostgreSQL pg $ SG.insertGen_ orders asks
-            _ <- withPostgreSQL pg $ SG.insertGen_ orders bids
+            _ <- withPostgreSQL pg $ SG.insertGen_ radarOrders asks
+            _ <- withPostgreSQL pg $ SG.insertGen_ radarOrders bids
             return True
       print $ "Forking Socket Client : " ++ show payload
-      forkIO $ mkClientApp payload handler
+      forkIO $ mkRadarClientApp payload handler
+
+    setupDexSocket pg makerAddr takerAddr = do
+      let payload = WebsocketReqPayload makerAddr takerAddr True 100
+          handler o = do
+            _ <- withPostgreSQL pg $ SG.insertGen_ dexOrders [o]
+            return True
+      print $ "Forking Socket Client : " ++ show payload
+      forkIO $ mkERCDexClientApp payload handler
 
 main :: IO ()
 main = do
---    hSetBuffering stdout NoBuffering
---    hSetBuffering stderr NoBuffering
     hSetBuffering stdout LineBuffering
+    hSetBuffering stderr LineBuffering
 
     putStrLn "Hello transfer-indexer"
     config <- mkConfig
     let pgConn = pg config
     withPostgreSQL pgConn . tryCreateTable $ SG.gen filledData
-    withPostgreSQL pgConn . tryCreateTable $ SG.gen orders
+    withPostgreSQL pgConn . tryCreateTable $ SG.gen radarOrders
+    withPostgreSQL pgConn . tryCreateTable $ SG.gen dexOrders
     _ <- runWeb3' $ eventLoop config
     loop
   where
