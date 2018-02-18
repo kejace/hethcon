@@ -6,4 +6,5 @@ RUN apt-get update && apt-get install -y \
   libgmp-dev \
   libpq-dev \
   libnss3-dev \
-  libnss3
+  libnss3 \
+  netbase

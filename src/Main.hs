@@ -20,6 +20,7 @@ import           Network.Ethereum.Web3
 import           Network.Ethereum.Web3.Types (Filter(..), DefaultBlock(..))
 import           Network.Ethereum.Web3.Address (toText)
 import           Network.Ethereum.Web3.Contract (Event(..))
+import           System.IO
 
 import           Config
 import           Orphans                   ()
@@ -31,7 +32,7 @@ filledData = SG.genTable "LogFill" []
 eventLoop :: Config
           -> Web3 HttpProvider ()
 eventLoop (Config conn addr relay) = do
-  let fltr = (eventFilter addr  :: Filter Exchange.LogFill) {filterFromBlock = BlockWithNumber 4148002 }
+  let fltr = (eventFilter addr  :: Filter Exchange.LogFill) {filterFromBlock = BlockWithNumber 4157011 }
   liftIO $ print $ show fltr
   void $ eventMany' fltr 1000 $ \e@Exchange.LogFill{..} -> do
     liftIO . print $ "Got LogFill: " ++ show e
@@ -47,6 +48,9 @@ eventLoop (Config conn addr relay) = do
 
 main :: IO ()
 main = do
+    hSetBuffering stdout NoBuffering
+    hSetBuffering stderr NoBuffering
+
     putStrLn "Hello transfer-indexer"
     config <- mkConfig
     let pgConn = pg config
