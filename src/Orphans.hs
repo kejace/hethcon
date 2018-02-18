@@ -7,8 +7,9 @@ module Orphans where
 import           Database.Selda
 import           Database.Selda.Backend
 import           Data.Maybe                     (fromJust)
-import           Data.Text                      (unpack)
+import           Data.Text                      (unpack, pack)
 import           Network.Ethereum.Web3
+import           Network.Ethereum.Web3.Encoding (ABIDecode(..))
 import           Network.Ethereum.Web3.Address  (fromText, toText)
 
 -- these instances would be defined in a central library
@@ -27,9 +28,9 @@ instance SqlType (UIntN 256) where
   defaultValue = error "No default value for (UIntN 256) type"
 
 instance SqlType (BytesN 32) where
-  mkLit = undefined --LCustom . LBytestring . unBytesN
-  sqlType _ = TInteger
-  fromSql (SqlString x) = undefined --fromJust . uIntNFromInteger . read . unpack $ x
+  mkLit = LCustom . LText . pack . show --unBytesN
+  sqlType _ = TText
+  fromSql (SqlString x) = fromJust . fromData $ x
   fromSql v          = error $ "fromSql: (BytesN 32) column with non-address value: " ++ show v
   defaultValue = error "No default value for (BytesN 32) type"
 

@@ -28,7 +28,7 @@ run-stack-native:
 all: stack
 
 0x: stack
-	createdb -h localhost -p 5432 -U postgres erc20 ; CONTRACT_ADDRESS=0x12459C951127e0c374FF9105DdA097662A027093 NODE_URL="http://parity-proxy.foam.svc.cluster.local:8545/" make transfer-indexer
+	createdb -h localhost -p 5432 -U postgres erc20 ; CONTRACT_ADDRESS=0x12459C951127e0c374FF9105DdA097662A027093 NODE_URL="http://parity-proxy.foam.svc.cluster.local:8645/" make transfer-indexer
 
 stack:
 	stack install
