@@ -1,0 +1,9 @@
+docker:
+  enable: true
+image:
+  container:
+    base: "tokenindexerbase"
+    name: "tokenindexer"
+    add:
+      static/: /opt/app/static
+      config/: /opt/app/config

@@ -32,6 +32,8 @@ import           Data.Typeable
 import           Config
 import           Orphans                   ()
 
+import           Relay
+
 filledData :: SG.GenTable Exchange.LogFill
 filledData = SG.genTable "LogFill" []
 

@@ -1,4 +1,4 @@
-resolver: lts-9.10
+resolver: lts-10.0
 
 packages:
   - '.'
@@ -12,6 +12,10 @@ packages:
       subdirs:
         - selda 
         - selda-postgresql
+    extra-dep: true
+  - location:
+      git: https://github.com/blinky3713/relay-api
+      commit: 76f5f5b2044b4bfa9fc6231fc67b8b95c9efbda9 
     extra-dep: true
 
 extra-deps:

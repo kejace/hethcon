@@ -14,7 +14,7 @@ build:
 
 ## Builds base image used for `stack image container`
 build-base:
-	@docker build -t fpco/myapp-base -f Dockerfile.base .
+	@docker build -t foam/token-indexer-base -f Dockerfile.base .
 
 ## Builds app using stack-native.yaml
 build-stack-native: build-base
