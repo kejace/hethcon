@@ -9,7 +9,7 @@ import           Database.Selda.PostgreSQL
 import           Network.Ethereum.Web3
 import           System.Environment        (getEnv, lookupEnv)
 import qualified Text.Read                 as T
-
+import           Debug.Trace
 import           Relay
 
 readEnvVar :: Read a => String -> ExceptT String IO a
@@ -40,6 +40,8 @@ mkConfig = do
                                , pgPassword = Just pass
                                , pgDatabase = db
                                }
+    envVar <- getEnvVar "CONTRACT_ADDRESS"
+    liftIO $ putStrLn $ "CONTRACT_ADDRESS is " ++ (envVar)
     addr <- fromString <$> getEnvVar "CONTRACT_ADDRESS"
     relay <- liftIO $ mkRelayClientEnv "api.radarrelay.com" "/0x/v0" 80
     return $ Config pgConn addr relay

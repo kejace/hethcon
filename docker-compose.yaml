@@ -27,5 +27,5 @@ services:
       - PG_USER=postgres
       - PG_DATABASE=erc20
       - PG_PASSWORD=password
-      - NODE_URL="https://mainnet.infura.io/7QHpybCROfXKpT7hNUfm:8545"
-      - CONTRACT_ADDRESS="0x12459C951127e0c374FF9105DdA097662A027093"
+      - NODE_URL=https://mainnet.infura.io/7QHpybCROfXKpT7hNUfm:8545
+      - CONTRACT_ADDRESS=0x12459c951127e0c374ff9105fda097662a027093

@@ -47,6 +47,7 @@ eventLoop (Config conn addr relay) = do
 
 main :: IO ()
 main = do
+    putStrLn "Hello transfer-indexer"
     config <- mkConfig
     let pgConn = pg config
     withPostgreSQL pgConn . tryCreateTable $ SG.gen filledData

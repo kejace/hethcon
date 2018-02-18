@@ -4,4 +4,6 @@ WORKDIR /opt/app
 RUN apt-get update && apt-get install -y \
   ca-certificates \
   libgmp-dev \
-  libpq-dev
+  libpq-dev \
+  libnss3-dev \
+  libnss3
