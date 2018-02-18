@@ -12,8 +12,11 @@ build:
 	@stack build
 	@BINARY_PATH=${BINARY_PATH_RELATIVE} docker-compose build
 
+base-pull:
+	@stack docker pull
+
 ## Builds base image used for `stack image container`
-build-base:
+build-base: base-pull
 	@docker build -t foam/token-indexer-base -f Dockerfile.base .
 
 ## Builds app using stack-native.yaml
