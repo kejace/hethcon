@@ -30,6 +30,7 @@ run-stack-native:
 	@docker run -p 3000:3000 -it -w /opt/app foam/token-indexer transfer-indexer
 
 build0x: build-stack-native
+	@docker tag foam/token-indexer kejace/hethcon
 	@docker-compose rm -f && docker-compose kill && docker-compose up -d
 
 docker0x: 
