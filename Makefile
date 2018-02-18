@@ -25,6 +25,9 @@ build-stack-native: build-base
 run-stack-native:
 	@docker run -p 3000:3000 -it -w /opt/app foam/token-indexer transfer-indexer
 
+docker0x: build-stack-native
+	@docker-compose rm -f && docker-compose kill && docker-compose 
+
 all: stack
 
 0x: stack
