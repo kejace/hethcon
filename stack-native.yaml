@@ -1,9 +1,10 @@
+resolver: lts-10.0
 docker:
   enable: true
 image:
   container:
-    base: "tokenindexerbase"
-    name: "tokenindexer"
+    base: "token-indexer-base"
+    name: "token-indexer"
     add:
       static/: /opt/app/static
       config/: /opt/app/config
