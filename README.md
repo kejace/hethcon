@@ -1,7 +1,11 @@
 # hethcon
 
-![logo](logo.gif?raw=true)
+![logo](https://github.com/kejace/hethcon/raw/master/logo.gif?raw=true)
 
+## try it!
+
++ graphql is [here](http://ec2-52-26-52-30.us-west-2.compute.amazonaws.com:3150/graphiql)
++ connect postgres like this: `psql -h ec2-52-26-52-30.us-west-2.compute.amazonaws.com -p 31501 -U postgres erc20`
 
 Not to be confused with `Hencon Vacuum Technologies designs, manufactures, supplies and supports a complete range of heavy-duty vacuum systems for industrial, plant and mining applications.`
 
