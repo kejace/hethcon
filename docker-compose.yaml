@@ -4,6 +4,11 @@ services:
     image: sheerun/awesome-postgres:9.5
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql1
+    healthcheck:
+      test: ["CMD", "psql", "-h", "localhost"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
   token-indexer:
     build:
       context: .
