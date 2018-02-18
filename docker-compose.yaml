@@ -1,5 +1,16 @@
 version: '2.1'
 services:
+  postgrest:
+    image: postgrest/postgrest
+    ports:
+      - "31502:3000"
+    environment:
+      PGRST_DB_URI: "postgres://postgres:postgres@postgres:5432/erc20"
+      PGRST_DB_SCHEMA: public
+      PGRST_DB_ANON_ROLE: postgres
+      PGRST_SERVER_PROXY_URI: "http://ec2-52-26-52-30.us-west-2.compute.amazonaws.com:31502/"
+    links:
+      - "postgres:postgres"
   postgraphql:
     image: erasche/postgraphql:latest
     ports:
@@ -13,7 +24,7 @@ services:
         PGUSER: postgres
         PGPASSWORD: postgres
         PGHOST: postgres
-        PGDATABASE: postgres
+        PGDATABASE: erc20
         PGPORT: 5432
     links:
         - "postgres:postgres"  
