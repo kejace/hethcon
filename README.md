@@ -30,7 +30,7 @@ Yopu need a `postgres` server running (`localhost` by default). Suggested to run
 Inspect the contract [here](https://etherscan.io/address/0xd26114cd6EE289AccF82350c8d8487fedB8A0C07)
 
 ```bash
-> createdb -h localhost -p 5432 -U postgres filled ; CONTRACT_ADDRESS=d26114cd6EE289AccF82350c8d8487fedB8A0C07 NODE_URL="http://parity-proxy.foam.svc.cluster.local:8645/" make transfer-indexer
+> make 0x
 ```
 
 ## future work
