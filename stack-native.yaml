@@ -8,7 +8,6 @@ image:
     add:
       static/: /opt/app/static
       config/: /opt/app/config
-resolver: lts-10.0
 
 packages:
   - '.'

@@ -1,0 +1,11 @@
+version: '2'
+services:
+  postgres:
+    image: sheerun/awesome-postgres:9.5
+  token-indexer:
+    build:
+      context: .
+      args:
+        - BINARY_PATH
+    image: token-indexer 
+    command: /opt/myapp/myapp
