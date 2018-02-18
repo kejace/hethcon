@@ -22,6 +22,7 @@ executable web3-psql
                      , Orphans
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5
+                     , containers
                      , errors
                      , data-default
                      , generics-sop

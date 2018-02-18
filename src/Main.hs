@@ -11,8 +11,12 @@ module Main where
 
 import qualified Contracts.Exchange        as Exchange
 
-import           Control.Concurrent        (threadDelay)
+
+import           Control.Concurrent.MVar   (newMVar, putMVar, takeMVar)
+import           Control.Concurrent        (threadDelay, forkIO)
 import           Control.Monad             (void, forM_)
+import qualified Data.Set                  as S
+import           Data.Monoid
 import           Database.Selda            hiding (def)
 import qualified Database.Selda.Generic    as SG
 import           Database.Selda.PostgreSQL
@@ -25,6 +29,7 @@ import           System.IO
 import           Config
 import           Orphans                   ()
 import           Relay
+import           Relay.DB                  (orders)
 
 filledData :: SG.GenTable Exchange.LogFill
 filledData = SG.genTable "LogFill" []
@@ -32,29 +37,43 @@ filledData = SG.genTable "LogFill" []
 eventLoop :: Config
           -> Web3 HttpProvider ()
 eventLoop (Config conn addr relay) = do
-  let fltr = (eventFilter addr  :: Filter Exchange.LogFill) {filterFromBlock = BlockWithNumber 4157011 }
-  liftIO $ print $ show fltr
-  void $ eventMany' fltr 1000 $ \e@Exchange.LogFill{..} -> do
-    liftIO . print $ "Got LogFill: " ++ show e
-    _ <- liftIO . withPostgreSQL conn $ SG.insertGen_ filledData [e]
-    orders <- liftIO $ runClientM (getExchangeOrders (Just 10) (Just 1) [] [] [] [] [toText logFillMaker_] [toText logFillTaker_] [] []) relay
-    case orders of
-      Left err -> error $ show err
-      Right os -> do
-       if os == []
-         then liftIO . print $ ("No ORDERS" :: String)
-         else forM_ orders $ liftIO . print
-    return ContinueEvent
+    let fltr = (eventFilter addr  :: Filter Exchange.LogFill) {filterFromBlock = BlockWithNumber 4157011 }
+    knownTokenPairs <- liftIO $ newMVar S.empty
+    void $ eventMany' fltr 1000 $ \e@Exchange.LogFill{..} -> do
+      liftIO . print $ "Got LogFill: " ++ show e
+      _ <- liftIO . withPostgreSQL conn $ SG.insertGen_ filledData [e]
+      pairs <- liftIO $ takeMVar knownTokenPairs
+      let newPair@(makerToken, takerToken) = ("0x" <> toText logFillMakerToken_, "0x" <> toText logFillTakerToken_)
+      if newPair `S.member` pairs
+        then liftIO $ do
+          print $ "Found Known Token Pair : " ++ show newPair
+          putMVar knownTokenPairs pairs
+        else liftIO $ do
+          print $ "Found New Token Pair : " ++ show newPair
+          setupSocket conn makerToken takerToken
+          putMVar knownTokenPairs $ S.insert newPair pairs
+      return ContinueEvent
+  where
+    setupSocket pg makerAddr takerAddr = do
+      let payload = WebsocketReqPayload makerAddr takerAddr True 100
+          handler = \(OrderBook asks bids) -> do
+            _ <- withPostgreSQL pg $ SG.insertGen_ orders asks
+            _ <- withPostgreSQL pg $ SG.insertGen_ orders bids
+            return True
+      print $ "Forking Socket Client : " ++ show payload
+      forkIO $ mkClientApp payload handler
 
 main :: IO ()
 main = do
-    hSetBuffering stdout NoBuffering
-    hSetBuffering stderr NoBuffering
+--    hSetBuffering stdout NoBuffering
+--    hSetBuffering stderr NoBuffering
+    hSetBuffering stdout LineBuffering
 
     putStrLn "Hello transfer-indexer"
     config <- mkConfig
     let pgConn = pg config
     withPostgreSQL pgConn . tryCreateTable $ SG.gen filledData
+    withPostgreSQL pgConn . tryCreateTable $ SG.gen orders
     _ <- runWeb3' $ eventLoop config
     loop
   where
