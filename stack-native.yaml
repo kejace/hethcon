@@ -21,7 +21,7 @@ packages:
     extra-dep: true
   - location:
       git: https://github.com/blinky3713/relay-api
-      commit: d51bdae6b442536a0430299f6ad07fe3f96432c8 
+      commit: d8a6ee12b2942668535606f7a33290483a11e13a 
     extra-dep: true
 
 extra-deps:
