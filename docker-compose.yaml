@@ -5,9 +5,9 @@ services:
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql1
     healthcheck:
-      test: ["CMD", "psql", "-h", "localhost"]
-      interval: 1m30s
-      timeout: 10s
+      test: ["CMD-SHELL", "pg_isready -U postgres && sleep 20"]
+      interval: 30s
+      timeout: 30s
       retries: 3
   token-indexer:
     build:
@@ -17,7 +17,7 @@ services:
     image: foam/token-indexer
     depends_on:
       postgres:
-        condition: service_started
+        condition: service_healthy
     command: web3-psql
     environment:
       - PG_HOST=localhost
