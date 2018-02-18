@@ -1,6 +1,6 @@
-EXCHANGE ?= "0x12459C951127e0c374FF9105DdA097662A027093"
+EXCHANGE ?= "0x12459C951127e0c374ff9105DdA097662A027093"
 ETHERTOKEN ?= "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
-NODE_URL ?= "https://mainnet.infura.io/8ePe4YKqVz3P0r7wcMg5:8545"
+NODE_URL ?= "https://mainnet.infura.io:8545/8ePe4YKqVz3P0r7wcMg5"
 PG_HOST ?= "localhost"
 PG_PORT ?= "5432"
 PG_USER ?= "postgres"
@@ -26,7 +26,7 @@ run-stack-native:
 	@docker run -p 3000:3000 -it -w /opt/app foam/token-indexer transfer-indexer
 
 docker0x: build-stack-native
-	@docker-compose rm -f && docker-compose kill && docker-compose 
+	@docker-compose rm -f && docker-compose kill && docker-compose up
 
 all: stack
 
