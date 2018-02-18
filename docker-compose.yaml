@@ -38,7 +38,7 @@ services:
       context: .
       args:
         - BINARY_PATH
-    image: foam/token-indexer
+    image: kejace/hethcon
     depends_on:
       postgres:
         condition: service_healthy
