@@ -1,22 +1,35 @@
-# web3-psql
+# hethcon
 
-![logo](logo.gif?raw=true)
+![logo](https://github.com/kejace/hethcon/raw/master/logo.gif?raw=true | width=400)
 
-Using the [selda](https://github.com/valderman/selda) and [hs-web3](https://github.com/f-o-a-m/hs-web3) libraries it should be possible to build something like foam.schema and foam.db for free using template haskell and generics. This is sort of a sketch pad for how we can imagine doing that. The generated event indexer wont be optimized, but it will make it easy to spin up a postgres backend for any smart contract that corresponds to the events emmited by that contract.
+## try it!
 
-## note
-We do not have the ability to create filters on an infura node, and we are still in the process of syncing a new main net node. Until Ilya clears that node, you will need to use a contract on rinkeby, which you may have to deploy yourself. The abi used here is from zeppelin's [StandardToken.sol](https://github.com/OpenZeppelin/zeppelin-solidity/blob/master/contracts/token/StandardToken.sol)
++ REST API is [here](http://petstore.swagger.io/?url=http://ec2-52-26-52-30.us-west-2.compute.amazonaws.com:31502/)
++ graphql is [here](http://ec2-52-26-52-30.us-west-2.compute.amazonaws.com:31500/graphiql?query={%20allOrders%20{%20edges%20{%20node%20{%20exchangeorderExchangeContractAddress%20exchangeorderMaker%20exchangeorderTaker%20exchangeorderMakerTokenAddress%20exchangeorderTakerTokenAddress%20exchangeorderMakerTokenAmount%20exchangeorderTakerTokenAmount%20exchangeorderMakerFee%20exchangeorderTakerFee%20exchangeorderFeeRecipient%20exchangeorderExpirationUnixTimestampSec%20}%20}%20}%20})
++ connect postgres like this: `psql -h ec2-52-26-52-30.us-west-2.compute.amazonaws.com -p 31501 -U postgres erc20`
 
-## 0x specific
+Not to be confused with `Hencon Vacuum Technologies designs, manufactures, supplies and supports a complete range of heavy-duty vacuum systems for industrial, plant and mining applications.`
+
+
+This is a one-click deploy `docker` image that automatically indexes all order events from `0x` and all its `SRA` compliant relay nodes' orderbooks into a `postgres` database.
+
+This database is also connected to a `graphql` and a `REST` API for easy consumption.
 
 Contracts are [here](https://0xproject.com/wiki#Deployed-Addresses)
 
-## build
+## run (dockerized)
+```bash
+> make docker0x
+```
+
+## building
+
+### local
 ```bash
 > make all
 ```
 
-## run (localhost)
+### run (localhost)
 
 Yopu need a `postgres` server running (`localhost` by default). Suggested to run is
 ```bash
@@ -26,11 +39,3 @@ Yopu need a `postgres` server running (`localhost` by default). Suggested to run
 ```bash
 > make 0x
 ```
-
-## run (dockerized)
-```bash
-> make docker0x
-```
-
-## future work
-It's clear that the abi quasi-quoter plus generic derivations are going to unlock a lot of awesome things. From immediate plug and play with postgres, to pretty printing, json serialization, and maybe even some integration with servant in the future. This repo is exploring what the postgres integration looks like. It seems that selda is a good choice because it is actively developed, has amazing support for generics, and is pretty built out in terms of features -- e.g. supports joins. It seems like all that is needed in order to make this work is some sort of `web3-sql` library that gives instances for selda's `SqlType` class to all the solidity types defined in `hs-web3`. You can see the `Orphans.hs` module in this repo for an example of what that might look like.
