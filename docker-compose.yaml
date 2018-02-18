@@ -13,7 +13,7 @@ services:
     depends_on:
       postgres:
         condition: service_started
-    command: createdb -h localhost -p 5432 -U postgres erc20; web3-psql
+    command: web3-psql
     environment:
       - PG_HOST=localhost
       - PG_PORT=5432
