@@ -1,8 +1,29 @@
 sudo: required
-dist: trusty
+
 services:
 - docker
-script:
+
+# Do not choose a language; we provide our own build tools.
+language: generic
+
+# Caching so the next build will be fast too.
+cache:
+  directories:
+  - $HOME/.stack
+
+# Ensure necessary system libraries are present
+addons:
+  apt:
+    packages:
+      - libgmp-dev
+
+before_install:
+# Download and unpack the stack executable
+- mkdir -p ~/.local/bin
+- export PATH=$HOME/.local/bin:$PATH
+- travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+
+install:
 - make build-stack-native
 
 after_success:
@@ -10,6 +31,7 @@ after_success:
   docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
   docker push kejace/hethcon;
   fi
+
 env:
   matrix:
   - secure: n96TMa++4aJ0DYQExVhas8JgwFN1t7vu0nTLuNGJXJe3JoUm9574PPG/ZKuTCD+VDOYi5XThi4DbMfsDzV9s8PHgRZZw/oeMRrzSjWuK0qw7rwrnXQJYEvIQoN/aQnGE21Y0tgY6tBgtdkX1HoC6BeTnV8pN5BKmuaX0vhZkjz4Gzq0y8JsY2iKhBPYdGKXnnA3xOfje4qNOWPF5niSJsMuK754r0AG9sYbFTqNsGjoCx5NSD3lPVLyfoZkLx75O0tII6IGaDQjjYa7/UinCmEHRvrKwzFkqOF+oj4bHaljalkowLpXPvl3FKIAGNFfwnOrg0uhcI4lhJAJviBYjpoPNrujtlopgI481ApwWFn+pK39wc/7d4ikD/SZZkOG0xbyIjj3fibCAlr1tK6wE7rwixFCxEDLBrXNP81z5Tcei+nHLa6izTy3uxLndJYY+8CUJlF0ZjocbD+aQteC6SlG59K7r65lGy0Zqoyv8NmWQowQBXA9qzLSXVfCZ8nEHAFTKtViZX5FGW60tzJmUwf8Aq41jQvvl0GMnMVOcQuX+TVCqVYEsL4Y1AjCZygaF22GDD0Mv71ttYghyoj7ufmihxITS4QPO2FM4oBEAWWQ+roEYpAQvuYNJGwtYKP87IGVa5CR/V4WyFcAP1bWmjN3AlZ8IrOh5NY14eAnvb9Q=
