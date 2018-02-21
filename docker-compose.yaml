@@ -45,10 +45,6 @@ services:
     ports:
       - "31501:5432"
   token-indexer:
-    build:
-      context: .
-      args:
-        - BINARY_PATH
     image: kejace/hethcon
     depends_on:
       postgres:
