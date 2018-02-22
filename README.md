@@ -1,6 +1,7 @@
 # hethcon
 
 ![logo](https://github.com/kejace/hethcon/raw/master/images/logo.gif?raw=true)
+[![Build Status](https://travis-ci.org/kejace/hethcon.svg?branch=master)](https://travis-ci.org/kejace/hethcon)
 
 ## try it!
 
